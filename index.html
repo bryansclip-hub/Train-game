@@ -1,8 +1,11 @@
 <!DOCTYPE html>
+<!-- Little Steam Train © 2026 Bryan+Stvk. All rights reserved. Do not copy, resell or redistribute without written permission. -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <title>Little Steam Train</title>
+<meta name="author" content="Bryan+Stvk">
+<meta name="copyright" content="© 2026 Bryan+Stvk. All rights reserved.">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#fff6e0">
 <link rel="icon" href="icon-192.png">
@@ -231,13 +234,21 @@ button:active{transform:translateY(3px);box-shadow:0 1px 0 #b9801a}
 .mt,.lv,.sn,.rn,.rb,.barn,.ch,.deco,.night-layer{display:none}
 .sc-2 .mt,.sc-3 .lv,.sc-9 .lv,.sc-5 .sn,.sc-10 .sn,.sc-6 .rn,.sc-6 .rb,.sc-1 .barn,.sc-4 .barn,.sc-1 .c1,.sc-2 .c2,.sc-4 .c4,.sc-5 .c5,.sc-7 .owl,.sc-3 .fg,.sc-6 .fg,.sc-8 .c8,.sc-9 .c9,.sc-10 .c10,.dusk .night-layer{display:inline}
 .dusk .day-layer,.sc-3 .fl,.sc-5 .fl,.sc-6 .fl,.sc-8 .fl,.sc-10 .fl,.sc-5 .sun,.sc-6 .sun{display:none}
+.copy{margin-top:10px;font-size:clamp(.65rem,1.6vw,.85rem);font-weight:700;opacity:.75}
+.balw{position:absolute;left:10px;top:94px;z-index:2;display:none;align-items:center;gap:6px;pointer-events:none;font-weight:800}
+.balw b{display:block;width:clamp(90px,16vw,150px);height:12px;border:3px solid var(--ink);border-radius:8px;background:#fff;overflow:hidden}
+.balw i{display:block;height:100%;width:0;background:#7ddc7d}
+.rbw{position:absolute;left:18%;top:8%;width:64%;height:34%;z-index:1;pointer-events:none;border-radius:999px 999px 0 0;background:radial-gradient(circle at 50% 100%,transparent 52%,#ff6f91 52% 58%,#ffb347 58% 64%,#ffe14d 64% 70%,#7ddc7d 70% 76%,#4aa3ff 76% 82%,#b58cff 82% 88%,transparent 88%)}
+.bumpy{animation:shk .12s linear infinite}
+@keyframes shk{25%{transform:translate(2px,-2px)}75%{transform:translate(-2px,2px)}}
+.rain .rn,.snow .sn,.leaves .lv{display:inline;opacity:1}
 @media (prefers-reduced-motion:reduce){*{animation-duration:0s!important;animation-iteration-count:1!important}}
 </style>
 </head>
 <body>
 <div class="stage" id="stage">
-<div class="menu" id="menu"><div class="mcard"><div class="logo"><span class="l1">Little</span><span class="l2">Steam Train</span></div><div class="sub">All aboard for a happy adventure!</div><button class="big" id="play" type="button">▶ Play</button><div class="mrow"><button id="mshop" type="button">🛒<br>Shop</button><button id="msnd" type="button">🔊<br>Sound</button><button id="mfs" type="button">⛶<br>Full screen</button></div><div class="stats" id="stats"></div><p class="mhint">Hold ▶ to drive and collect coins! Tap the sun and your friends!</p></div></div>
-<div class="hud" id="hud"></div><div class="ev" id="ev"></div>
+<div class="menu" id="menu"><div class="mcard"><div class="logo"><span class="l1">Little</span><span class="l2">Steam Train</span></div><div class="sub">All aboard for a happy adventure!</div><button class="big" id="play" type="button">▶ Play</button><div class="mrow"><button id="mshop" type="button">🛒<br>Shop</button><button id="msnd" type="button">🔊<br>Sound</button><button id="mfs" type="button">⛶<br>Full screen</button></div><div class="stats" id="stats"></div><div class="copy">© 2026 Bryan+Stvk. All rights reserved.</div><p class="mhint">Hold ▶ to drive and collect coins! Tap the sun and your friends!</p></div></div>
+<div class="hud" id="hud"></div><div class="balw" id="balw"><span>⚖️</span><b><i id="bali"></i></b></div><div class="ev" id="ev"></div>
 <div class="shop" id="mode"><div class="scard"><h2>Choose a mode</h2><div class="sgrid"><button class="lb" data-m="mis">🐄<br>Missions</button><button class="lb" data-m="lvl">🏁<br>Levels</button><button class="lb" data-m="inf">♾️<br>Infinite</button></div><button id="mx" type="button">Back</button></div></div>
 <div class="shop" id="res"><div class="scard"><h2 id="rt"></h2><p id="rb"></p><button id="rn" type="button">Next</button> <button id="rm" type="button">🏠 Home</button></div></div>
 <div class="shop" id="lvl"><div class="scard"><h2>Choose a level</h2><div class="sgrid" id="lgrid"></div><button id="lvx" type="button">Back</button></div></div>
@@ -357,10 +368,10 @@ function TY(w){return 330+30*Math.sin(w*TP+.6)+8*Math.sin(w*TP*3)}
 function ty(x){return TY(x+cam)}
 var td='';for(var x=-40;x<=1640;x+=16){td+=(td?'L':'M')+x+' '+TY(x).toFixed(1)+' '}
 document.getElementById('ties').setAttribute('d',td);document.getElementById('rail').setAttribute('d',td);
-var tr=stage.querySelector('.train'),TL=155,px=250,mode='ride',pt=0,lastT=0,boostT=0,hopT=0,hopY=0,sayT=0,vel=0,keyF=0,keyB=0,rm=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var tr=stage.querySelector('.train'),TL=155,px=250,mode='ride',pt=0,lastT=0,boostT=0,hopT=0,hopY=0,sayT=0,vel=0,keyF=0,keyB=0,susY=0,susV=0,rm=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 var WH=[[40,16],[95,16],[150,20],[195,20]],wel=[0,1,2,3].map(function(i){return document.getElementById('w'+i)});
 function place(x){
-  var a=Math.atan2(ty(x+TL)-ty(x),TL),c=Math.cos(a),s=Math.sin(a),by=ty(x)-2.5-hopY;
+  var a=Math.atan2(ty(x+TL)-ty(x),TL),c=Math.cos(a),s=Math.sin(a),by=ty(x)-2.5-hopY-susY;
   tr.setAttribute('transform','translate('+x+' '+by.toFixed(1)+') rotate('+(a*180/Math.PI).toFixed(2)+') translate(-40 -106)');
   WH.forEach(function(w,i){
     var xw=x+(w[0]-40)*c,yw=ty(xw)-2.5-hopY-(w[1]+2),dx=xw-x,dy=yw-by;
@@ -370,11 +381,11 @@ function place(x){
 function step(ts){
   if(!lastT)lastT=ts;var dt=Math.min(ts-lastT,50)/1000;lastT=ts;
   var mo=!!menuOpen(),tv=(mo||done)?0:(keyF?1:0)-(keyB?1:0),sp=(boostT>0?420:200)*SPD[eq];
-  vel+=(tv*sp-vel)*Math.min(1,dt*(tv?4:3));
+  vel=physics(vel,tv,sp,dt,mo);
   if(Math.abs(vel)<2)vel=0;
   cam+=vel*dt;px=220+Math.max(-40,Math.min(60,vel*.25));mode='ride';
   if(!mo&&GM==='inf'){sceneT+=dt;if(sceneT>210){sceneT=0;show((cur+1)%10)}}
-  worldUpd();modeTick();cargoUpd();evTick(dt,mo);
+  worldUpd();modeTick();cargoUpd();evTick(dt,mo);stab(dt);
   if(boostT>0)boostT-=dt;if(hopT>0)hopT-=dt;hopY=hopT>0?Math.sin(Math.PI*(1-hopT/.5))*35:0;stage.classList.toggle('zoom',boostT>0);stage.classList.toggle('moving',Math.abs(vel)>8);stage.classList.toggle('back',vel<-8);stage.classList.toggle('menuopen',mo);stage.classList.toggle('mis',GM==='mis');place(px);coinsTick();requestAnimationFrame(step);
 }
 place(250);requestAnimationFrame(step);
@@ -808,6 +819,87 @@ function modeTick(){
 CAR=CAR.replace("<rect x='106' y='-26' width='40' height='5' fill='#5a3e36'/>","<rect x='106' y='-38' width='72' height='7' rx='3' fill='#5a3e36'/>");
 function setCargo(n){CG.forEach(function(g){g.remove()});CG=[];for(var k=n-1;k>=0;k--){var g=document.createElementNS(NS,'g');g.innerHTML=CAR+"<g transform='translate(50 -30)'><g class='bob'>"+ANI[k]+"</g></g>";tr.parentNode.insertBefore(g,tr);CG[k]=g}}
 mstats();
+var wob=0,fell=false,fk=-1,warned=false,balP=-1,AN=[],windT=0,windD=1,bumpT=0,gifts=[],muds=[],evBusy=0,balw=document.getElementById('balw'),bali=document.getElementById('bali');
+function physics(v,tv,sp,dt,mo){
+  if(mo||(done&&!fell))return 0;
+  var s=(ty(px+155)-ty(px))/155,a=(tv*sp-v)*(tv?3.2:.9)+s*420;
+  if(windT>0){a+=windD*150;windT-=dt}
+  v+=a*dt;
+  if(!tv&&Math.abs(v)<14&&Math.abs(s)<.35)v=0;
+  var lim=sp*1.35;return Math.max(-lim,Math.min(lim,v));
+}
+function suspUpd(dt){
+  var c=ty(px+70)-2*ty(px)+ty(px-70);
+  if(bumpT>0){bumpT-=dt;susV+=(Math.random()-.5)*100}
+  susV+=(-susY*150-susV*14+c*Math.abs(vel)*.12)*dt;susY+=susV*dt;
+  if(susY>14)susY=14;if(susY<-14)susY=-14;
+}
+function setCargo(n){
+  CG.forEach(function(g){g.remove()});CG=[];AN=[];wob=0;fell=false;fk=-1;warned=false;
+  for(var k=n-1;k>=0;k--){var g=document.createElementNS(NS,'g');g.innerHTML=CAR+"<g class='an' transform='translate(50 -30)'><g class='bob'>"+ANI[k]+"</g></g>";tr.parentNode.insertBefore(g,tr);CG[k]=g;AN[k]=g.querySelector('.an')}
+  if(n)banner('\ud83d\udc04 Carry it gently! Not too fast, not too steep');
+}
+function cargoUpd(){var xf=px,t=performance.now()/1000;CG.forEach(function(g,k){var f=backX(xf,k?70:95),r=backX(f,60),a=Math.atan2(ty(f)-ty(r),f-r)*180/Math.PI;g.setAttribute('transform','translate('+r.toFixed(1)+' '+(ty(r)-4.5).toFixed(1)+') rotate('+a.toFixed(2)+') translate(-20 0)');xf=r;if(AN[k]&&k!==fk)AN[k].setAttribute('transform','translate(50 -30) rotate('+(Math.sin(t*13+k)*wob*16).toFixed(1)+')')})}
+function dropAnimal(){
+  fell=true;done=true;fk=Math.floor(Math.random()*CG.length);var w=AN[fk];
+  if(w&&w.animate)w.animate([{transform:'translate(50px,-30px) rotate(0deg)',opacity:1},{transform:'translate(130px,70px) rotate(170deg)',opacity:0}],{duration:900,easing:'ease-in',fill:'forwards'});
+  tone(500,.5,'sawtooth',.1,0,100,1200);setTimeout(function(){mfail(fk)},900);
+}
+function mfail(k){var nm=['cow','pig','lamb'][k],em=['\ud83d\udc04','\ud83d\udc37','\ud83d\udc11'][k];document.getElementById('rt').textContent='Oh no! The '+nm+' fell off '+em;document.getElementById('rb').textContent='Slow down, especially on steep hills.';document.getElementById('rn').textContent='Try again';document.getElementById('res').classList.add('on')}
+function stab(dt){
+  suspUpd(dt);
+  var on=GM==='mis'&&!menuOpen()&&CG.length>0;
+  balw.style.display=on?'flex':'none';
+  if(!on||done)return;
+  var s=Math.abs((ty(px+155)-ty(px))/155),v=Math.abs(vel),
+  d=Math.max(0,(v-230)/150)+Math.max(0,s*v/80-.7)*1.2+Math.max(0,s-.3)*3+(windT>0?.5:0)+(bumpT>0?.6:0);
+  wob+=(d>0?d*.9:-.35)*dt;wob=Math.max(0,Math.min(1.2,wob));
+  var p=Math.round(wob*100);if(p!==balP){balP=p;bali.style.width=Math.min(100,p)+'%';bali.style.background=p<40?'#7ddc7d':p<70?'#ffd54a':'#ff5e5e'}
+  if(wob>.55&&!warned){warned=true;banner('\u26a0\ufe0f Careful! Slow down!');tone(300,.3,'square',.08,0,200,900)}
+  if(wob<.3)warned=false;
+  if(wob>=1&&!fell)dropAnimal();
+}
+var GIFT="<rect x='-14' y='-28' width='28' height='26' rx='4' fill='#ff5e8a' stroke='#5a3e36' stroke-width='3'/><rect x='-3' y='-28' width='6' height='26' fill='#ffd54a'/><path d='M0 -28q-16 -14 -14 -3M0 -28q16 -14 14 -3' fill='none' stroke='#5a3e36' stroke-width='3'/>",MUD="<ellipse cy='-2' rx='46' ry='9' fill='#7a5230' stroke='#5a3e36' stroke-width='3'/><circle cx='-10' cy='-8' r='4' fill='#8a6238'/><circle cx='14' cy='-10' r='3' fill='#8a6238'/>";
+function addObj(arr,svg){var g=document.createElementNS(NS,'g');g.innerHTML=svg;sg.appendChild(g);arr.push({w:px+SK[eq].f+520+cam,el:g})}
+function objTick(arr,front,hit){for(var i=arr.length-1;i>=0;i--){var o=arr[i],sx=o.w-cam;if(sx<=front&&sx>-100){hit();o.el.remove();arr.splice(i,1)}else if(sx<-120||sx>2200){o.el.remove();arr.splice(i,1)}else o.el.setAttribute('transform','translate('+sx.toFixed(1)+' '+(ty(sx)-2).toFixed(1)+')')}}
+function earnN(n,x,y){var b=score;score+=n;sv2('stw',score);upd();fx(x,y,'+'+n);chime();if(Math.floor(score/50)>Math.floor(b/50))confetti()}
+function giftHit(){var r=Math.random();if(r<.55){earnN(10,px+60,ty(px)-90);banner('\ud83c\udf81 +10 coins!')}else if(r<.85){boostT=3;banner('\ud83d\ude80 Gift: turbo!')}else{earnN(25,px+60,ty(px)-90);banner('\ud83c\udf89 Jackpot!');confetti()}}
+function mudHit(){vel*=.35;fx(px+80,ty(px)-60,'\ud83d\udca6');noise(.3,.15,0,700);banner('\ud83d\udca6 Splash! Slowed down')}
+function padTick(front){
+  for(var i=pads.length-1;i>=0;i--){var p=pads[i],sx=p.w-cam,a=Math.atan2(ty(sx+80)-ty(sx),80)*180/Math.PI;
+    if(sx<=front&&sx>-100){boostT=3.5;banner('\ud83d\ude80 Boost!');tone(200,.5,'sawtooth',.12,0,900,1500);p.el.remove();pads.splice(i,1)}
+    else if(sx<-120||sx>2200){p.el.remove();pads.splice(i,1)}
+    else p.el.setAttribute('transform','translate('+sx.toFixed(1)+' '+(ty(sx)-2).toFixed(1)+') rotate('+a.toFixed(1)+')')}
+  objTick(gifts,front,giftHit);objTick(muds,front,mudHit);
+}
+function rainbow(){var e=document.createElement('div');e.className='rbw';stage.appendChild(e);var a=e.animate([{opacity:0},{opacity:.9,offset:.2},{opacity:.9,offset:.8},{opacity:0}],{duration:9000});a.onfinish=function(){e.remove()};chime()}
+function windFx(){for(var i=0;i<9;i++)(function(i){setTimeout(function(){var e=document.createElement('span');e.className='bal';e.textContent='\ud83d\udca8';e.style.top=(15+Math.random()*55)+'%';stage.appendChild(e);var a=e.animate(windD>0?[{left:'-8%'},{left:'108%'}]:[{left:'108%'},{left:'-8%'}],{duration:2200+Math.random()*1200,easing:'linear'});a.onfinish=function(){e.remove()}},i*350)})(i)}
+function flock(){for(var i=0;i<5;i++)(function(i){setTimeout(function(){var e=document.createElement('span');e.className='bal';e.textContent='\ud83d\udc26';e.style.top=(10+i*5+(i%2)*4)+'%';stage.appendChild(e);var a=e.animate([{left:'-8%'},{left:'108%'}],{duration:7000,easing:'linear'});a.onfinish=function(){e.remove()}},i*250)})(i)}
+function weather(){var k=pick(['rain','snow','leaves']),T={rain:'\ud83c\udf27\ufe0f Rain shower!',snow:'\u2744\ufe0f Snow flurry!',leaves:'\ud83c\udf42 Leaf storm!'};banner(T[k]);stage.classList.add(k);setTimeout(function(){stage.classList.remove(k)},9000)}
+function meteors(){
+  var W=fwc.width=stage.clientWidth||800,H=fwc.height=stage.clientHeight||450,cx=fwc.getContext('2d'),ms=[],t0=0;
+  function f(ts){if(!t0)t0=ts;var e=ts-t0;if(e<4500&&Math.random()<.12)ms.push({x:Math.random()*W,y:-10,vx:-4-Math.random()*3,vy:5+Math.random()*3,l:1});cx.clearRect(0,0,W,H);ms.forEach(function(m){m.x+=m.vx;m.y+=m.vy;m.l-=.01;if(m.l>0){cx.globalAlpha=m.l;cx.strokeStyle='#fff6a8';cx.lineWidth=3;cx.beginPath();cx.moveTo(m.x,m.y);cx.lineTo(m.x-m.vx*5,m.y-m.vy*5);cx.stroke()}});cx.globalAlpha=1;if(e<6000)requestAnimationFrame(f);else cx.clearRect(0,0,W,H)}
+  requestAnimationFrame(f);
+}
+var EV=[
+ function(){banner('\ud83d\udcb0 Coin shower!');coinShower()},
+ function(){banner(GM==='mis'?'\u26a1 Speed pad! Careful with animals!':'\u26a1 Speed pad ahead!');addPad()},
+ function(){if(evBusy)return;evBusy=1;setTimeout(function(){evBusy=0},6500);banner('\ud83c\udf86 Fireworks!');fireworks()},
+ function(){banner('\ud83c\udf88 Balloon parade!');balloon()},
+ function(){banner('\ud83c\udf08 Rainbow!');rainbow()},
+ function(){windD=Math.random()<.5?1:-1;windT=5;banner('\ud83d\udca8 Wind gust '+(windD>0?'\u27a1\ufe0f':'\u2b05\ufe0f'));windFx()},
+ function(){bumpT=4;banner('\ud83d\udea7 Bumpy track!');stage.classList.add('bumpy');setTimeout(function(){stage.classList.remove('bumpy')},4000)},
+ function(){banner('\ud83c\udf81 Mystery gift ahead!');addObj(gifts,GIFT)},
+ function(){banner('\ud83d\udca6 Muddy puddle ahead!');addObj(muds,MUD)},
+ weather,
+ function(){if(evBusy)return;evBusy=1;setTimeout(function(){evBusy=0},6500);banner('\u2604\ufe0f Meteor shower!');meteors()},
+ function(){banner('\ud83d\udc26 Bird flock!');flock()}
+];
+function evTick(dt,mo){
+  if(mo||done)return;evT-=dt;if(evT>0)return;evT=14+Math.random()*16;
+  EV[Math.floor(Math.random()*EV.length)]();
+}
+console.log('Little Steam Train \u00a9 2026 Bryan+Stvk. All rights reserved.');
 var menu=document.getElementById('menu'),msnd=document.getElementById('msnd'),rot=document.getElementById('rot');
 function fs(){var d=document.documentElement,p=(d.requestFullscreen||d.webkitRequestFullscreen||function(){}).call(d);if(p&&p.then)p.then(function(){return screen.orientation&&screen.orientation.lock&&screen.orientation.lock('landscape')}).catch(function(){})}
 document.getElementById('play').addEventListener('click',function(){ac();loadSamples();musicStart();document.getElementById('mode').classList.add('on')});
